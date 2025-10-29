@@ -22,8 +22,8 @@ void setup() {
 }
 
 void loop() {
-  showLEDState(mood);
-  
+  showLEDState(mood);  
+
   buttonState = digitalRead(buttonPin);
 
   if (buttonState == HIGH && !ButtonPressed) {
@@ -38,24 +38,28 @@ void loop() {
     ButtonPressed = false;
   }
 
-  unsigned long currentTimer = millis();
-  if (currentTimer - touchedTimer > reducedInterval) {
+  unsigned long currentTimer = millis();  
+
+  
+  if (currentTimer - touchedTimer > unTouchInterval &&
+      currentTimer - reducedTimer > reducedInterval) {
     mood = mood - 1;
     if (mood < 0) mood = 0;
     reducedTimer = currentTimer;
   }
 }
 
+// 
 void showLEDState(int state) {
   float brightnessInterval = 255 / 10.0;
 
   if (state >= neutralMood) {
-    analogWrite(RledPin, 0);
-    analogWrite(GledPin, 255 - brightnessInterval * (state - neutralMood));
-    analogWrite(BledPin, brightnessInterval * (state - neutralMood));
+    analogWrite(RledPin, 255);
+    analogWrite(GledPin, brightnessInterval * (state - neutralMood));
+    analogWrite(BledPin, 255 - brightnessInterval * (state - neutralMood));
   } else {
-    analogWrite(RledPin, brightnessInterval * (neutralMood - state));
-    analogWrite(GledPin, 255 - brightnessInterval * (neutralMood - state));
-    analogWrite(BledPin, 0);
+    analogWrite(RledPin, 255 - brightnessInterval * (neutralMood - state));
+    analogWrite(GledPin, brightnessInterval * (neutralMood - state));
+    analogWrite(BledPin, 255);
   }
 }
